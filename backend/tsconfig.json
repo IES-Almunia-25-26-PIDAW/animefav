@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    // COMPILACIÓN
+    "target": "ES2020",           // Compila a JavaScript moderno (ES2020)
+    "module": "commonjs",         // Usa require() en vez de import/export
+    "lib": ["ES2020"],            // APIs de JavaScript disponibles
+    
+    // CARPETAS
+    "outDir": "./dist",           // JavaScript compilado va a /dist
+    "rootDir": "./src",           // Código TypeScript está en /src
+    
+    // CARACTERÍSTICAS
+    "strict": true,               // Modo estricto (detecta más errores)
+    "esModuleInterop": true,      // Mejor compatibilidad con librerías
+    "skipLibCheck": true,         // No revisa errores en node_modules
+    "forceConsistentCasingInFileNames": true,  // Mayúsculas consistentes
+    "resolveJsonModule": true,    // Permite importar archivos .json
+    "moduleResolution": "node"    // Resuelve imports como Node.js
+  },
+  
+  "include": ["src/**/*", "db.js"],        // Compila todo dentro de /src
+  "exclude": ["node_modules", "dist"]  // NO compiles esto
+}
