@@ -15,9 +15,15 @@ app.get('/', (req, res) => {
   res.json({ message: 'API Anime Tracker funcionando 🚀' });
 });
 
-// Rutas
+// Importar rutas (solo una vez cada una)
 const userRoutes = require('./src/routes/userRoutes');
+const jikanRoutes = require('./src/routes/jikanRoutes');
+const animeRoutes = require('./src/routes/animeRoutes');
+
+// Usar rutas
 app.use('/api/users', userRoutes);
+app.use('/api/jikan', jikanRoutes);
+app.use('/api/animes', animeRoutes);
 
 // Manejo de errores
 app.use((err, req, res, next) => {

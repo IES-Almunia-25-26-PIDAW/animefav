@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/UserController');
+const userController = require('../controllers/userController');
+const authMiddleware = require('../middleware/auth');
 
-// Rutas
-router.get('/', UserController.getAll);
-router.post('/', UserController.create);
-router.get('/:id', UserController.getById);
-router.get('/email/:email', UserController.getByEmail);
-router.put('/:id', UserController.update);
-router.delete('/:id', UserController.delete);
-router.post('/login', UserController.login);
+// Rutas públicas (sin autenticación)
+router.post('/register', userController.register);
+router.post('/login', userController.login);
+
+// Rutas protegidas (requieren autenticación)
+router.get('/profile', authMiddleware, userController.getProfile);
+router.get('/all',authMiddleware, userController.getAllUsers);
+
 module.exports = router;
