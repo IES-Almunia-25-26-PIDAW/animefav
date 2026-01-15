@@ -46,7 +46,7 @@ class User {
   // Obtener todos los usuarios
   static async getAll() {
     const query = `
-      SELECT id_usuario, nombre, email, fecha_registro, fecha_nacimiento
+      SELECT id_usuario, nombre, email, fecha_registro, fecha_nacimiento, role
       FROM Usuario
     `;
     const [rows] = await db.execute(query);
