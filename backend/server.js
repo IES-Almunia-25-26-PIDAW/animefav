@@ -20,11 +20,15 @@ const userRoutes = require('./src/routes/userRoutes');
 const jikanRoutes = require('./src/routes/jikanRoutes');
 const animeRoutes = require('./src/routes/animeRoutes');
 const listaRoutes = require('./src/routes/listaRoutes');
+const puntuacionRoutes = require('./src/routes/puntuacionRoutes');
+
 // Usar rutas
 app.use('/api/users', userRoutes);
 app.use('/api/jikan', jikanRoutes);
 app.use('/api/animes', animeRoutes);
 app.use('/api/listas', listaRoutes);
+app.use('/api/puntuaciones', puntuacionRoutes);
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {
