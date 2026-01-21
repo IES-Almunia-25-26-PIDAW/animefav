@@ -19,11 +19,12 @@ app.get('/', (req, res) => {
 const userRoutes = require('./src/routes/userRoutes');
 const jikanRoutes = require('./src/routes/jikanRoutes');
 const animeRoutes = require('./src/routes/animeRoutes');
-
+const listaRoutes = require('./src/routes/listaRoutes');
 // Usar rutas
 app.use('/api/users', userRoutes);
 app.use('/api/jikan', jikanRoutes);
 app.use('/api/animes', animeRoutes);
+app.use('/api/listas', listaRoutes);
 
 // Manejo de errores
 app.use((err, req, res, next) => {

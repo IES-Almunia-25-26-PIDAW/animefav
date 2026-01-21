@@ -1,49 +1,116 @@
 const db = require('../config/database');
 
 class Anime {
-
+  
+  // Crear un anime
+  static async create(animeData) {
+    const { titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada, mal_id } = animeData;
+    
+    const query = `
+      INSERT INTO Anime (titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada, mal_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    const [result] = await db.execute(query, [
+      titulo, 
+      descripcion, 
+      fecha_estreno, 
+      num_episodios, 
+      edad_recomendada, 
+      imagen_portada,
+      mal_id
+    ]);
+    
+    return result.insertId;
+  }
+  
   // Obtener todos los animes
-  static async getAll() {
-    const query = 'SELECT * FROM Anime';
-    const [rows] = await db.execute(query);
+  static async getAll(limit = 50, offset = 0) {
+    const query = `
+      SELECT * FROM Anime 
+      ORDER BY fecha_estreno DESC 
+      LIMIT ? OFFSET ?
+    `;
+    const [rows] = await db.execute(query, [limit, offset]);
     return rows;
   }
-
-  // Obtener un anime por ID
-  static async getById(id) {
+  
+  // Buscar anime por ID
+  static async findById(id) {
     const query = 'SELECT * FROM Anime WHERE id_anime = ?';
     const [rows] = await db.execute(query, [id]);
     return rows[0];
   }
-
-  // Crear un nuevo anime
-  static async create(animeData) {
-    const { titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada } = animeData;
-    const query = `
-      INSERT INTO Anime (titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-    const [result] = await db.execute(query, [titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada]);
-    return result.insertId;
+  
+  // Buscar anime por MAL ID
+  static async findByMalId(malId) {
+    const query = 'SELECT * FROM Anime WHERE mal_id = ?';
+    const [rows] = await db.execute(query, [malId]);
+    return rows[0];
   }
-
-  // Actualizar un anime
+  
+  // Buscar animes por título
+  static async searchByTitle(titulo) {
+    const query = 'SELECT * FROM Anime WHERE titulo LIKE ? ORDER BY titulo';
+    const [rows] = await db.execute(query, [`%${titulo}%`]);
+    return rows;
+  }
+  
+  // Actualizar anime
   static async update(id, animeData) {
     const { titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada } = animeData;
+    
     const query = `
-      UPDATE Anime
-      SET titulo=?, descripcion=?, fecha_estreno=?, num_episodios=?, edad_recomendada=?, imagen_portada=?
-      WHERE id_anime=?
+      UPDATE Anime 
+      SET titulo = ?, descripcion = ?, fecha_estreno = ?, 
+          num_episodios = ?, edad_recomendada = ?, imagen_portada = ?
+      WHERE id_anime = ?
     `;
-    const [result] = await db.execute(query, [titulo, descripcion, fecha_estreno, num_episodios, edad_recomendada, imagen_portada, id]);
+    
+    const [result] = await db.execute(query, [
+      titulo, 
+      descripcion, 
+      fecha_estreno, 
+      num_episodios, 
+      edad_recomendada, 
+      imagen_portada,
+      id
+    ]);
+    
     return result.affectedRows;
   }
-
-  // Eliminar un anime
+  
+  // Eliminar anime
   static async delete(id) {
-    const query = 'DELETE FROM Anime WHERE id_anime=?';
+    const query = 'DELETE FROM Anime WHERE id_anime = ?';
     const [result] = await db.execute(query, [id]);
     return result.affectedRows;
+  }
+  
+  // Obtener géneros de un anime
+  static async getGenres(animeId) {
+    const query = `
+      SELECT g.id_genero, g.nombre 
+      FROM Genero g
+      INNER JOIN Anime_Genero ag ON g.id_genero = ag.id_genero
+      WHERE ag.id_anime = ?
+    `;
+    const [rows] = await db.execute(query, [animeId]);
+    return rows;
+  }
+  
+  // Asignar géneros a un anime
+  static async assignGenres(animeId, genreIds) {
+    await db.execute('DELETE FROM Anime_Genero WHERE id_anime = ?', [animeId]);
+    
+    if (genreIds && genreIds.length > 0) {
+      const values = genreIds.map(genreId => [animeId, genreId]);
+      const placeholders = values.map(() => '(?, ?)').join(', ');
+      const flatValues = values.flat();
+      
+      const query = `INSERT INTO Anime_Genero (id_anime, id_genero) VALUES ${placeholders}`;
+      await db.execute(query, flatValues);
+    }
   }
 }
 
