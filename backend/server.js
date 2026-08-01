@@ -1,6 +1,14 @@
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(__dirname, `.env.${process.env.NODE_ENV || 'development'}`),
+});
+
+const { validateEnv } = require('./src/config/env');
+validateEnv();
+
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +23,9 @@ app.get('/', (req, res) => {
   res.json({ message: 'API Anime Tracker funcionando 🚀' });
 });
 
-// Importar rutas (solo una vez cada una)
+
+
+
 const userRoutes = require('./src/routes/userRoutes');
 const jikanRoutes = require('./src/routes/jikanRoutes');
 const animeRoutes = require('./src/routes/animeRoutes');
